@@ -43,4 +43,11 @@ resource "aws_instance" "swapi_ubuntu_instance" {
   tags = {
     Name = "SwapiUbuntuInstance"
   }
+
+  # Provisioning to run Ansible playbook after instance creation
+  provisioner "local-exec" {
+    command = <<EOT
+      ansible-playbook -i ${self.public_ip}, -u ubuntu --private-key ~/.ssh/id_rsa Ansible/install-docker.yaml
+    EOT
+  }
 }
