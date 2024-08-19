@@ -14,12 +14,28 @@ resource "aws_key_pair" "swapi_ssh_key" {
 }
 
 # Security group for SWAPI EC2 instance
-resource "aws_security_group" "swapi_allow_ssh" {
-  name_prefix = "swapi_allow_ssh_"
+resource "aws_security_group" "swapi_allow_ssh_http" {
+  name_prefix = "swapi_allow_ssh_http_"
 
   ingress {
     from_port   = 22
     to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow HTTP (port 80)
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  # Allow Django (port 8000)
+  ingress {
+    from_port   = 8000
+    to_port     = 8000
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -38,7 +54,7 @@ resource "aws_instance" "swapi_ubuntu_instance" {
   instance_type = "t2.micro"
   key_name      = aws_key_pair.swapi_ssh_key.key_name
 
-  vpc_security_group_ids = [aws_security_group.swapi_allow_ssh.id]
+  vpc_security_group_ids = [aws_security_group.swapi_allow_ssh_http.id]
 
   tags = {
     Name = "SwapiUbuntuInstance"
