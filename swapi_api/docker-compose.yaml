@@ -31,7 +31,7 @@ services:
     volumes:
       - ./nginx:/etc/nginx/conf.d
     ports:
-      - "88:80"
+      - "80:80"
     depends_on:
       - web
     networks:
